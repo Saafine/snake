@@ -33,6 +33,7 @@ const Game = (function() {
 
   function setupGame() {
     drawMap();
+    addKeydownListeners();
   }
 
   function drawMap() {
@@ -60,16 +61,12 @@ const Game = (function() {
   }
 
 
-  /**
-   * Update snake position?
-   */
   function drawSnake() {
     /**
      * Should belong to graphics?
      */
     ctx.fillStyle = 'green';
-    // ctx.fillRect(0, 0, 50, 50);
-    Store.snake.forEach((bodyPart) => {
+    Store.snake.position.forEach((bodyPart) => {
       /**
        * add snake graphics
        */
@@ -77,28 +74,33 @@ const Game = (function() {
     });
   }
 
-  // function drawRamp() {
-  //   ctx.fillStyle = 'rgb(200, 0, 0)';
-  //   ctx.beginPath();
-  //   ctx.moveTo(Store.ramp.start.x, Store.ramp.start.y); // ramp start
-  //   ctx.lineTo(Store.ramp.end.x, Store.ramp.end.x); // ramp end
-  //   ctx.lineTo(Store.ramp.end.x, canvasDimensions.height);
-  //   ctx.lineTo(Store.ramp.start.x, canvasDimensions.height);
-  //   ctx.fill();
-  // }
+  function moveSnake() {
+    Store.snake.position.splice(0, 1);
+    const headPositionIdx = Store.snake.position.length - 1;
+    Store.snake.position[headPositionIdx].x = 2;
+    Store.snake.position[headPositionIdx].y = 2;
+    drawSnake();
+  }
+
+  function addKeydownListeners() {
+    addEventListener('keydown', (e) => {
+      switch (e.keyCode) {
+        case(32): // space
+          moveSnake();
+          break;
+      }
+    });
+  }
 
   function loop() {
     drawSnake();
-    if (count === 5) {
-      return;
-    }
-    console.log('hey');
-    // if (!Store.state.getCurrent()) {
-    // }
-    // ctx.clearRect(0, 0, canvasDimensions.width, canvasDimensions.height);
-    // drawRamp();
-    // drawBall();
 
+    /**
+     * reload initial map instead of clearing 
+     */
+    // ctx.clearRect(0, 0, canvasDimensions.width, canvasDimensions.height);
+
+    // redraw if changes happened
     window.requestAnimationFrame(loop);
     count++;
   }
